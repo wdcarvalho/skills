@@ -9,6 +9,7 @@ Cada pasta na raiz é uma skill: um `SKILL.md` com o comportamento e os arquivos
 | Skill | Para que serve |
 |---|---|
 | [`orquestrar-agentes`](orquestrar-agentes/) | Divide um trabalho grande em ondas: fatos, fundação, pacotes paralelos, verificação independente, correção e fecho com PR. A sessão principal planeja e decide; agentes mais baratos executam. |
+| [`daily-hub`](daily-hub/) | Uma thread por dia como hub: ela mantém a fila, delega filhas efêmeras por task, recebe cartões de ≤10 linhas e esconde o filho da tela. Troca N abas por uma conversa — você revisa produto (PR/CI), nunca processo. |
 
 ## Instalação
 
