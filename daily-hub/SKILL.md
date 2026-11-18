@@ -28,6 +28,7 @@ Violar qualquer uma mata o experimento — não é preferência de estilo.
 13. **O hub não pesquisa, não analisa e não escreve.** Pesquisa, comparação de preço, leitura de documentação, plano e texto são **trabalho** — vão para filho com [`research-brief.md`](research-brief.md), no projeto `operations`. Se o hub passou de 3 tool calls próprios, ele já furou isto.
 14. **Continuação não cria thread.** Mesmo assunto = `t3_thread_send` no filho existente, com o delta. Thread nova só por outro projeto, outro entregável ou contexto contaminado. Abrir thread nova para a mesma pergunta dobra o token e perde o contexto.
 15. **Todo filho devolve ao hub — em todo turno.** Brief sem o passo `t3_thread_send` para o hub não é lançado. No início de **todo** run, o hub lê no STATE cada filho `rodando` e coleta os já concluídos (`t3_thread_read`) antes de responder qualquer coisa. Rede de segurança para filho que esqueceu de avisar. Caso real de 18/11: filho mandou no meio do trabalho, continuou por 2 turnos e terminou calado — a linha ficou `rodando` com o filho morto. Por isso a entrega é por **turno**, e a varredura compara o estado do thread com o estado do STATE.
+16. **Todo launch leva `runtimeMode: "full-access"`, nunca `auto`.** O `t3_thread_send` do filho para o hub falha com `runtime_mode_escalation_denied` se o filho for mais restrito que o hub. Caso real de 18/11: dois filhos terminaram e não conseguiram devolver. Use o bloco de launch desta skill literalmente, sem remontar parâmetros.
 
 ## 2. Abertura do dia — natural, sem comando
 
@@ -81,6 +82,7 @@ t3_thread_launch({
   title: "#<n> <projeto> - <task curta>",   # <n> = número da linha no STATE
   workspaceStrategy: { type: "worktree", baseRef: "<base do projects.md>" },
   modelSelection: { instanceId: "claudeAgent", model: "claude-sonnet-5-5", options: [{ id: "effort", value: "medium" }] },   # padrão fixo; nunca herdar o modelo do hub
+  runtimeMode: "full-access",   # obrigatório; com "auto" o filho não consegue t3_thread_send para o hub
   message: <child-brief preenchido>,
   delegatedFrom: { environmentId: "<env>", threadId: "<hub>", title: "hub" }
 })
@@ -113,6 +115,7 @@ t3_thread_launch({
   title: "#<n> pesquisa - <tema em 5 palavras>",   # <n> = número da linha no STATE
   workspaceStrategy: { type: "root" },   // é documento, não código: sem worktree
   modelSelection: { instanceId: "claudeAgent", model: "claude-sonnet-5-5", options: [{ id: "effort", value: "medium" }] },   # padrão fixo; nunca herdar o modelo do hub
+  runtimeMode: "full-access",   # obrigatório; com "auto" o filho não consegue t3_thread_send para o hub
   message: <research-brief preenchido>,
   delegatedFrom: { environmentId: "<env>", threadId: "<hub>", title: "hub" }
 })

@@ -15,6 +15,7 @@ Se a thread atual é a thread do dia:
 9. **Antes de responder qualquer coisa**, leia os filhos `rodando` do STATE e colete os concluídos. Também caça o filho calado: thread `completed` com linha `rodando` no STATE → coleta, atualiza, `settle`.
 12. **Settle por padrão:** retorno do filho processado → `settle` nele, sempre. Mensagem nova o traz de volta sozinha.
 11. **Modelo padrão de filho: Sonnet 5.5 medium**, sempre via `modelSelection` explícito no `t3_thread_launch`. Nunca herdar o do hub.
+13. **`runtimeMode: "full-access"` em todo `t3_thread_launch`.** Nunca `auto`: o filho não consegue devolver ao hub. Copie o bloco de launch da SKILL.md literalmente.
 10. **Todo brief e todo delta incluem o `threadId` deste hub** no passo de entrega (`t3_thread_send`). Sem ele, não envie.
 
 ## Abertura natural — sem comando, sem frase-gatilho

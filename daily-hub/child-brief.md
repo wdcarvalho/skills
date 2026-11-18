@@ -7,7 +7,7 @@ Preenchido pelo hub, um por filho. Máx. 40 linhas. Substituir `<...>`.
 ## 0. Config de lançamento
 
 ```
-runtimeMode: full-access   # herda do hub; filho não pode ser mais amplo
+runtimeMode: full-access   # OBRIGATÓRIO e igual ao do hub; com auto o filho não consegue t3_thread_send ao hub
 isolation:   worktree      # obrigatório para implementação
 base:        origin/develop
 modelo:      claude-sonnet-5-5 · effort medium   # padrão; só muda se o usuário pedir
