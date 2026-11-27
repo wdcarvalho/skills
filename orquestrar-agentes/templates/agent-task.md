@@ -22,6 +22,6 @@ Relatório completo em <caminho do relatório>.
 
 ## Final answer
 
-Responda com no máximo <8 a 12> linhas, sem código e sem saída de comando.
+Responda com no máximo 10 linhas, sem código e sem saída de comando, no cartão de retorno do contexto.
 Grave o detalhe no relatório, com as seções "Pendências" e "Achados" sempre presentes.
 Última linha: <formato fixo, por exemplo: branch <nome>, commit <sha>, push ok>.

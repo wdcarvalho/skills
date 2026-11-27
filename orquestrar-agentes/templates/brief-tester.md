@@ -26,4 +26,4 @@ Teste pelo lado de fora, contra a decisão escrita, não contra o código.
 Tabela com cenário, regra, passa ou falha, para cada caso.
 Liste o teste vermelho por defeito do produto como resultado esperado, não como erro seu.
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
-Resposta final com no máximo <8 a 12> linhas e, na última, o caminho do patch e a contagem de falhas.
+Resposta final com no máximo 10 linhas e, na última, o caminho do patch e a contagem de falhas.

@@ -34,4 +34,4 @@ Não toque em arquivo de outro corretor que trabalha no mesmo tema ao lado.
 ## Delivery
 
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
-Resposta final com no máximo <8 a 12> linhas e, na última, branch <nome>, commit <sha>, push <ok ou rejeitado>.
+Resposta final com no máximo 10 linhas e, na última, branch <nome>, commit <sha>, push <ok ou rejeitado>.

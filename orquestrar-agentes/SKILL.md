@@ -10,7 +10,7 @@ description: Use quando o usuário pedir para orquestrar, coordenar ou delegar u
 Diagnostique, decida, especifique, leia relatórios e relance.
 Não edite código, não rode suíte, não faça commit, push nem PR.
 Escreva uma linha por turno enquanto o trabalho roda.
-Entregue um único resumo curto no fim e encerre, sem tabela e sem progresso no meio.
+Entregue um único resumo curto no fim e encerre, sem tabela e sem relatório de progresso além da linha de cada turno.
 Aponte o caminho do modelo em `templates/` em vez de copiar o texto dele.
 
 ## 1. Roles
@@ -20,12 +20,13 @@ Use modelo barato com esforço alto para implementar, testar, revisar e corrigir
 Use esforço baixo para tarefa mecânica, como editar texto de PR e commit simples.
 Use um executor mais caro só quando apenas ele alcança uma ferramenta necessária, como um conector.
 Leia do pedido quais modelos usar e não troque por conta própria.
+Se o executor for Claude e o pedido não disser o modelo, use `claude-sonnet-5-5` e diga isso no resumo.
 Nunca repasse ao executor um problema sem a decisão já tomada.
 
 ## 2. Context economy
 
 Nunca receba código nem saída de comando.
-Exija resposta final de 8 a 12 linhas e o detalhe num arquivo de relatório.
+Exija resposta final de no máximo 10 linhas, no formato do cartão de retorno do contexto, e o detalhe num arquivo de relatório.
 Abra o relatório só para decidir, e só as seções de pendências e de achados, por `grep` do título.
 Mantenha toda instrução longa em arquivo e o prompt do agente curto.
 Envie ao agente o que ler, em que ordem, um resumo de três linhas e as regras inquebráveis.
@@ -45,6 +46,8 @@ Dê os comandos de verificação na ordem.
 Defina os entregáveis e o formato da resposta final, com teto de linhas e última linha fixa quando houver PR.
 Inclua a saída de emergência: se o brief contradisser o código, faça o que for seguro e registre a pendência.
 Escreva no contexto comum o contrato entre dois agentes que dependem um do outro, com rotas, campos e erros.
+Escreva no contexto comum o envelope de decisão: o que o agente decide sozinho, o que o faz parar com uma única pergunta e o que ele nunca faz.
+Deixe ambiguidade de implementação sem bloquear: o agente escolhe o caminho mais simples e reversível e registra a premissa no cartão.
 
 ## 4. Waves
 
@@ -112,10 +115,22 @@ Trate o código como a verdade.
 Ao aviso de um agente, leia a resposta curta.
 Leia só a seção de pendências ou de achados do relatório quando houver.
 Decida, lance o próximo e termine o turno com uma linha.
-Não faça polling nem espere, porque a conclusão do agente acorda a sessão.
+Não faça polling em laço nem espere: a conclusão de um agente delegado acorda a sessão, e a seção 11 cobre o agente lançado como thread de topo.
+Devolva ao agente o retorno acima de 10 linhas ou sem o cartão, pedindo o formato, em vez de interpretá-lo.
 Não refaça o que delegou e não confira à mão o que um agente de conferência confere.
 No fim, resuma o que entrou com links, o que mudou de comportamento, o que depende do usuário e o que ficou em aberto.
 Diga sem enfeite o que não foi validado em ambiente real.
+
+## 11. Launching and tracking agents
+
+Lance cada agente em worktree próprio a partir da base declarada no contexto, nunca no checkout do usuário nem no da sessão principal.
+Passe o modelo de forma explícita em todo lançamento e não herde o da sessão principal.
+Dê ao agente o modo de permissão total (`runtimeMode: "full-access"` em `t3_thread_launch`) para ele conseguir devolver o retorno à sessão principal e não parar em pedido de aprovação.
+Na CLI do T3, `t3 thread start <projeto> - --worktree <base> --provider <id> --model <modelo> --json` lê o brief do stdin e imprime o ID da thread em JSON.
+A CLI não define o modo de permissão, então use `t3_thread_launch` quando precisar de `full-access`.
+Registre o ID de cada agente na pasta de trabalho no mesmo turno do lançamento, com tarefa, estado e hora.
+Agente lançado como thread de topo não acorda a sessão principal: ele termina cada turno enviando o cartão de retorno a ela.
+No início de todo turno, confira o estado de cada agente registrado como rodando e colete o que terminou sem avisar.
 
 ## Templates
 

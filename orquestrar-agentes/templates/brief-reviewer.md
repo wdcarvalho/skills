@@ -35,4 +35,4 @@ Marque cada caminho como coberto, descoberto ou não aplicável.
 ## Delivery
 
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
-Resposta final com no máximo <8 a 12> linhas e, na última, a contagem de achados por severidade.
+Resposta final com no máximo 10 linhas e, na última, a contagem de achados por severidade.

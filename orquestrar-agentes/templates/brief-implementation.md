@@ -41,6 +41,6 @@ Não edite documentos que outro agente também edita.
 
 ## Final answer
 
-No máximo <8 a 12> linhas, sem código e sem saída de comando.
+No máximo 10 linhas, sem código e sem saída de comando.
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
 Última linha: branch <nome>, commit <sha>, push <ok ou rejeitado>.

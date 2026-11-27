@@ -31,6 +31,7 @@ Verificação independente achou defeito em toda rodada real, inclusive em códi
 1. O usuário pede a orquestração e diz quais modelos usar.
 2. Copie `templates/context.md` para a pasta de trabalho fora do repositório e preencha.
 3. Para cada agente, escreva um brief a partir do modelo certo e envie `templates/agent-task.md` como prompt curto, apontando para o brief e para o contexto.
+   Lance cada agente em worktree próprio, com o modelo explícito e registrando o ID dele, como na seção 11 do `SKILL.md`.
 4. Lance as ondas na ordem da seção "Waves" do `SKILL.md`.
 5. Rode a verificação independente antes de dar a entrega por pronta.
 6. Lance as correções, separadas por tema.
