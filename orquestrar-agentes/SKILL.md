@@ -120,6 +120,7 @@ Devolva ao agente o retorno acima de 10 linhas ou sem o cartão, pedindo o forma
 Não refaça o que delegou e não confira à mão o que um agente de conferência confere.
 No fim, resuma o que entrou com links, o que mudou de comportamento, o que depende do usuário e o que ficou em aberto.
 Diga sem enfeite o que não foi validado em ambiente real.
+Registre o retorno de cada agente com `scripts/report.py`, como na seção 12.
 
 ## 11. Launching and tracking agents
 
@@ -132,6 +133,31 @@ Registre o ID de cada agente na pasta de trabalho no mesmo turno do lançamento,
 Agente lançado como thread de topo não acorda a sessão principal: ele termina cada turno enviando o cartão de retorno a ela.
 No início de todo turno, confira o estado de cada agente registrado como rodando e colete o que terminou sem avisar.
 
+## 12. Harness feedback
+
+O harness feedback fica sempre ativo: todo agente reporta atrito do harness em bloco, e a sessão principal registra os blocos num banco local.
+Atrito do harness é o que na própria orquestração atrapalhou: brief ou contexto ambíguo, template faltando ou quebrado, ferramenta, sandbox, configuração ou contrato de saída.
+Defeito de produto e dúvida de negócio não viram bloco: vão em "Achados" e em "Pendências".
+O formato do bloco, as chaves e as regras estão em `templates/harness-feedback.md`, e a instrução ao agente vem pela seção "Harness feedback" do contexto.
+O agente nunca escreve o fingerprint: `scripts/report.py` calcula, mascara dado pessoal e segredo antes de truncar e descarta o bloco inválido sem erro.
+O bloco é contexto, não prova: não mude o resultado de uma task por causa dele.
+
+Depois de cada agente terminar, registre o retorno sem abrir o relatório:
+
+```
+python3 scripts/report.py add-run < run.json
+python3 scripts/report.py add-feedback --run <id> --file <relatório>
+```
+
+Para ver os atritos que mais se repetem, rode `python3 scripts/report.py atritos --since 30d --top 20`.
+Quando corrigir um atrito, marque com `python3 scripts/report.py mark-fixed <fingerprint> --ref <PR ou commit>`.
+O banco padrão é `~/.orquestrar-agentes/runs.sqlite`, em diretório 700 e arquivo 600.
+Revise os atritos de vez em quando: a revisão é recomendada e não bloqueia a coleta.
+
+Para desligar, defina `ORQUESTRAR_HARNESS_FEEDBACK=0` ou passe `--no-harness-feedback` ao `add-feedback`.
+Desligado, apague a seção "Harness feedback" e a linha `atrito` do contexto, e nenhum brief exige o bloco.
+O parser ignora o bloco, sem erro.
+
 ## Templates
 
 Use `templates/context.md` para o arquivo único de contexto da rodada.
@@ -141,3 +167,4 @@ Use `templates/brief-tester.md` para a verificação funcional independente.
 Use `templates/brief-reviewer.md` para a revisão por tema.
 Use `templates/brief-correction.md` para as correções.
 Use `templates/brief-closing-and-pr.md` para o agente de fecho.
+Use `templates/harness-feedback.md` para o formato do bloco de atrito do harness.

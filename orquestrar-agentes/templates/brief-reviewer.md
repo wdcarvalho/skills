@@ -35,4 +35,5 @@ Marque cada caminho como coberto, descoberto ou não aplicável.
 ## Delivery
 
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
+Atrito do harness: siga a seção "Harness feedback" do contexto, quando ela existir.
 Resposta final com no máximo 10 linhas e, na última, a contagem de achados por severidade.

@@ -33,5 +33,6 @@ Leia nesta ordem: <contexto>, <todos os briefs e relatórios da rodada>, <este b
 ## Delivery
 
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
+Atrito do harness: siga a seção "Harness feedback" do contexto, quando ela existir, e escreva os blocos no relatório antes de abrir o PR.
 Resposta final com no máximo 10 linhas.
 Última linha: URL do PR, head <sha>, checks e reviews <estado>.

@@ -43,4 +43,5 @@ Não edite documentos que outro agente também edita.
 
 No máximo 10 linhas, sem código e sem saída de comando.
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
+Atrito do harness: siga a seção "Harness feedback" do contexto, quando ela existir.
 Última linha: branch <nome>, commit <sha>, push <ok ou rejeitado>.
