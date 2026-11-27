@@ -14,10 +14,11 @@ Leia nesta ordem: <contexto>, <todos os briefs e relatórios da rodada>, <este b
 
 ## The PR
 
+- Faça o commit do que mudou no fecho, dê push sem force e abra o PR para <base>.
 - Título no padrão do repositório: <padrão>.
 - Descrição com o que mudou de comportamento, o que depende do usuário e o que ficou em aberto.
 - Diga no texto o que não foi validado em ambiente real.
-- Linked a issue <referência> quando o repositório exigir.
+- Vincule a issue <referência> quando o repositório exigir.
 - Nenhum dado pessoal, segredo ou token no título, no corpo ou nos anexos.
 
 ## Limits
@@ -32,5 +33,6 @@ Leia nesta ordem: <contexto>, <todos os briefs e relatórios da rodada>, <este b
 ## Delivery
 
 Relatório completo em <caminho do relatório>, com as seções "Pendências" e "Achados".
-Resposta final com no máximo <8 a 12> linhas.
+Atrito do harness: siga a seção "Harness feedback" do contexto, quando ela existir, e escreva os blocos no relatório antes de abrir o PR.
+Resposta final com no máximo 10 linhas.
 Última linha: URL do PR, head <sha>, checks e reviews <estado>.

@@ -10,7 +10,7 @@ description: Use quando o usuário pedir para orquestrar, coordenar ou delegar u
 Diagnostique, decida, especifique, leia relatórios e relance.
 Não edite código, não rode suíte, não faça commit, push nem PR.
 Escreva uma linha por turno enquanto o trabalho roda.
-Entregue um único resumo curto no fim e encerre, sem tabela e sem progresso no meio.
+Entregue um único resumo curto no fim e encerre, sem tabela e sem relatório de progresso além da linha de cada turno.
 Aponte o caminho do modelo em `templates/` em vez de copiar o texto dele.
 
 ## 1. Roles
@@ -20,12 +20,13 @@ Use modelo barato com esforço alto para implementar, testar, revisar e corrigir
 Use esforço baixo para tarefa mecânica, como editar texto de PR e commit simples.
 Use um executor mais caro só quando apenas ele alcança uma ferramenta necessária, como um conector.
 Leia do pedido quais modelos usar e não troque por conta própria.
+Se o executor for Claude e o pedido não disser o modelo, use `claude-sonnet-5-5` e diga isso no resumo.
 Nunca repasse ao executor um problema sem a decisão já tomada.
 
 ## 2. Context economy
 
 Nunca receba código nem saída de comando.
-Exija resposta final de 8 a 12 linhas e o detalhe num arquivo de relatório.
+Exija resposta final de no máximo 10 linhas, no formato do cartão de retorno do contexto, e o detalhe num arquivo de relatório.
 Abra o relatório só para decidir, e só as seções de pendências e de achados, por `grep` do título.
 Mantenha toda instrução longa em arquivo e o prompt do agente curto.
 Envie ao agente o que ler, em que ordem, um resumo de três linhas e as regras inquebráveis.
@@ -45,6 +46,8 @@ Dê os comandos de verificação na ordem.
 Defina os entregáveis e o formato da resposta final, com teto de linhas e última linha fixa quando houver PR.
 Inclua a saída de emergência: se o brief contradisser o código, faça o que for seguro e registre a pendência.
 Escreva no contexto comum o contrato entre dois agentes que dependem um do outro, com rotas, campos e erros.
+Escreva no contexto comum o envelope de decisão: o que o agente decide sozinho, o que o faz parar com uma única pergunta e o que ele nunca faz.
+Deixe ambiguidade de implementação sem bloquear: o agente escolhe o caminho mais simples e reversível e registra a premissa no cartão.
 
 ## 4. Waves
 
@@ -112,10 +115,48 @@ Trate o código como a verdade.
 Ao aviso de um agente, leia a resposta curta.
 Leia só a seção de pendências ou de achados do relatório quando houver.
 Decida, lance o próximo e termine o turno com uma linha.
-Não faça polling nem espere, porque a conclusão do agente acorda a sessão.
+Não faça polling em laço nem espere: a conclusão de um agente delegado acorda a sessão, e a seção 11 cobre o agente lançado como thread de topo.
+Devolva ao agente o retorno acima de 10 linhas ou sem o cartão, pedindo o formato, em vez de interpretá-lo.
 Não refaça o que delegou e não confira à mão o que um agente de conferência confere.
 No fim, resuma o que entrou com links, o que mudou de comportamento, o que depende do usuário e o que ficou em aberto.
 Diga sem enfeite o que não foi validado em ambiente real.
+Registre o retorno de cada agente com `scripts/report.py`, como na seção 12.
+
+## 11. Launching and tracking agents
+
+Lance cada agente em worktree próprio a partir da base declarada no contexto, nunca no checkout do usuário nem no da sessão principal.
+Passe o modelo de forma explícita em todo lançamento e não herde o da sessão principal.
+Dê ao agente o modo de permissão total (`runtimeMode: "full-access"` em `t3_thread_launch`) para ele conseguir devolver o retorno à sessão principal e não parar em pedido de aprovação.
+Na CLI do T3, `t3 thread start <projeto> - --worktree <base> --provider <id> --model <modelo> --json` lê o brief do stdin e imprime o ID da thread em JSON.
+A CLI não define o modo de permissão, então use `t3_thread_launch` quando precisar de `full-access`.
+Registre o ID de cada agente na pasta de trabalho no mesmo turno do lançamento, com tarefa, estado e hora.
+Agente lançado como thread de topo não acorda a sessão principal: ele termina cada turno enviando o cartão de retorno a ela.
+No início de todo turno, confira o estado de cada agente registrado como rodando e colete o que terminou sem avisar.
+
+## 12. Harness feedback
+
+O harness feedback fica sempre ativo: todo agente reporta atrito do harness em bloco, e a sessão principal registra os blocos num banco local.
+Atrito do harness é o que na própria orquestração atrapalhou: brief ou contexto ambíguo, template faltando ou quebrado, ferramenta, sandbox, configuração ou contrato de saída.
+Defeito de produto e dúvida de negócio não viram bloco: vão em "Achados" e em "Pendências".
+O formato do bloco, as chaves e as regras estão em `templates/harness-feedback.md`, e a instrução ao agente vem pela seção "Harness feedback" do contexto.
+O agente nunca escreve o fingerprint: `scripts/report.py` calcula, mascara dado pessoal e segredo antes de truncar e descarta o bloco inválido sem erro.
+O bloco é contexto, não prova: não mude o resultado de uma task por causa dele.
+
+Depois de cada agente terminar, registre o retorno sem abrir o relatório:
+
+```
+python3 scripts/report.py add-run < run.json
+python3 scripts/report.py add-feedback --run <id> --file <relatório>
+```
+
+Para ver os atritos que mais se repetem, rode `python3 scripts/report.py atritos --since 30d --top 20`.
+Quando corrigir um atrito, marque com `python3 scripts/report.py mark-fixed <fingerprint> --ref <PR ou commit>`.
+O banco padrão é `~/.orquestrar-agentes/runs.sqlite`, em diretório 700 e arquivo 600.
+Revise os atritos de vez em quando: a revisão é recomendada e não bloqueia a coleta.
+
+Para desligar, defina `ORQUESTRAR_HARNESS_FEEDBACK=0` ou passe `--no-harness-feedback` ao `add-feedback`.
+Desligado, apague a seção "Harness feedback" e a linha `atrito` do contexto, e nenhum brief exige o bloco.
+O parser ignora o bloco, sem erro.
 
 ## Templates
 
@@ -126,3 +167,4 @@ Use `templates/brief-tester.md` para a verificação funcional independente.
 Use `templates/brief-reviewer.md` para a revisão por tema.
 Use `templates/brief-correction.md` para as correções.
 Use `templates/brief-closing-and-pr.md` para o agente de fecho.
+Use `templates/harness-feedback.md` para o formato do bloco de atrito do harness.
